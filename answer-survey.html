@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Builder: Answer Survey</title>
+    <link rel="shortcut icon" href="Form Builder logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Answer Survey</h1>
+    <input type="text" id="participantName" placeholder="Enter your name">
+    <input type="text" id="surveyCode" placeholder="Enter survey code">
+    <button onclick="startSurvey()">Start Survey</button>
+    <div id="surveyContainer"></div>
+    <button onclick="submitSurvey()" id="submitSurveyButton" style="display: none;">Submit Survey</button>
+    <p id="resultMessage"></p>
+    <footer style="background-color: #202123; color: #E0E0E0; padding: 20px; text-align: center;">
+        <div>
+            <p>&copy; 2024 Form Builder Software. All rights reserved.</p>
+            <p>
+                <a href="https://github.com/Jeevasuryaa/Form-Builder/blob/main/privacy-policy.txt" target="_blank" style="color: #3B82F6; text-decoration: none;">Privacy Policy</a> | 
+                <a href="https://github.com/Jeevasuryaa/Form-Builder/blob/main/terms-of-service.txt" target="_blank" style="color: #3B82F6; text-decoration: none;">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+    <script>
+        let currentSurvey=null;
+        function startSurvey(){
+            const surveyCode=document.getElementById('surveyCode').value.toUpperCase();
+            const surveys=JSON.parse(localStorage.getItem('surveys'));
+            if(!surveys || !surveys[surveyCode]){
+                alert('Invalid survey code.');
+                return;
+            }
+            currentSurvey=surveys[surveyCode];
+            if(currentSurvey.responses[document.getElementById('participantName').value]){
+                alert('You have already submitted this survey.');
+                return;
+            }
+            const surveyContainer=document.getElementById('surveyContainer');
+            surveyContainer.innerHTML='';
+            currentSurvey.questions.forEach((question,index)=>{
+                const questionDiv=document.createElement('div');
+                questionDiv.innerHTML=`<p>${index + 1}. ${question.question}</p>`;
+                question.options.forEach((option,i)=>{
+                    questionDiv.innerHTML+=`
+                        <input type="radio" name="question${index}" value="${i}">
+                        <label>${option}</label><br>
+                    `;
+                });
+                surveyContainer.appendChild(questionDiv);
+            });
+            document.getElementById('submitSurveyButton').style.display='block';
+        }
+        function submitSurvey(){
+            const participantName=document.getElementById('participantName').value;
+            const surveyCode=document.getElementById('surveyCode').value.toUpperCase();
+            if(!participantName || !surveyCode || !currentSurvey){
+                alert('Please fill out your name, survey code, and start the survey.');
+                return;
+            }
+            if(currentSurvey.responses[participantName]!==undefined){
+                alert('You have already submitted this survey.');
+                return;
+            }
+            const responses=[];
+            currentSurvey.questions.forEach((question,index)=>{
+                const selectedOption=document.querySelector(`input[name="question${index}"]:checked`);
+                responses.push(selectedOption ? parseInt(selectedOption.value) : null);
+            });
+
+            currentSurvey.responses[participantName]=responses;
+            const surveys=JSON.parse(localStorage.getItem('surveys'));
+            surveys[surveyCode]=currentSurvey;
+            localStorage.setItem('surveys',JSON.stringify(surveys));
+            document.getElementById('resultMessage').innerText = 'Survey submitted successfully.';
+            document.getElementById('submitSurveyButton').style.display = 'none';
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.disabled = true);
+        }
+    </script>
+</body>
+</html>

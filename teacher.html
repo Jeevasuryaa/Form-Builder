@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Builder: Create/Edit Quiz</title>
+    <link rel="shortcut icon" href="Form Builder logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Quiz Management</h1>
+    <div>
+        <button onclick="chooseOption('new')">Create New Quiz</button>
+        <button onclick="chooseOption('edit')">Edit Existing Quiz</button>
+    </div>
+    <div id="quizSection" style="display: none;">
+        <div id="editQuizCodeSection" style="display: none;">
+            <input type="text" id="existingQuizCode" placeholder="Enter existing quiz code">
+            <button onclick="loadQuiz()">Load Quiz</button>
+        </div>
+        <div id="questions">
+            <div class="question">
+                <input type="text" placeholder="Enter Question" class="question-input">
+                <div class="options">
+                    <input type="text" placeholder="Option 1" class="option-input">
+                    <input type="text" placeholder="Option 2" class="option-input">
+                    <input type="text" placeholder="Option 3" class="option-input">
+                    <input type="text" placeholder="Option 4" class="option-input">
+                    <p>Mark the correct option:</p>
+                    <select class="correct-option">
+                        <option value="0">Option 1</option>
+                        <option value="1">Option 2</option>
+                        <option value="2">Option 3</option>
+                        <option value="3">Option 4</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <button onclick="addQuestion()">Add Question</button>
+        <button onclick="generateQuiz()">Save Quiz</button>
+        <p id="quizCode"></p>
+    </div>
+    <footer style="background-color: #202123; color: #E0E0E0; padding: 20px; text-align: center;">
+        <div>
+            <p>&copy; 2024 Form Builder Software. All rights reserved.</p>
+            <p>
+                <a href="https://github.com/Jeevasuryaa/Form-Builder/blob/main/privacy-policy.txt" target="_blank" style="color: #3B82F6; text-decoration: none;">Privacy Policy</a> | 
+                <a href="https://github.com/Jeevasuryaa/Form-Builder/blob/main/terms-of-service.txt" target="_blank" style="color: #3B82F6; text-decoration: none;">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+    <script>
+        let quizzes=JSON.parse(localStorage.getItem('quizzes')) || {};
+        let currentQuizCode=null;
+        function chooseOption(option){
+            document.getElementById('quizSection').style.display='block';
+            if(option==='new'){
+                document.getElementById('editQuizCodeSection').style.display='none';
+                clearQuizForm();
+            } else if(option==='edit'){
+                document.getElementById('editQuizCodeSection').style.display='block';
+            }
+        }
+        function loadQuiz(){
+            const quizCode=document.getElementById('existingQuizCode').value.toUpperCase();
+            if (!quizzes[quizCode]){
+                alert('Quiz code not found.');
+                return;
+            }
+            currentQuizCode=quizCode;
+            const quizData=quizzes[quizCode];
+            populateQuizForm(quizData);
+        }
+        function populateQuizForm(quizData){
+            const questionsContainer=document.getElementById('questions');
+            questionsContainer.innerHTML='';
+            quizData.questions.forEach((question)=>{
+                const questionDiv=document.createElement('div');
+                questionDiv.className='question';
+                questionDiv.innerHTML=`
+                    <input type="text" value="${question.question}" class="question-input">
+                    <div class="options">
+                        <input type="text" value="${question.options[0]}" class="option-input">
+                        <input type="text" value="${question.options[1]}" class="option-input">
+                        <input type="text" value="${question.options[2]}" class="option-input">
+                        <input type="text" value="${question.options[3]}" class="option-input">
+                        <p>Mark the correct option:</p>
+                        <select class="correct-option">
+                            <option value="0" ${question.correctAnswer === 0 ? 'selected' : ''}>Option 1</option>
+                            <option value="1" ${question.correctAnswer === 1 ? 'selected' : ''}>Option 2</option>
+                            <option value="2" ${question.correctAnswer === 2 ? 'selected' : ''}>Option 3</option>
+                            <option value="3" ${question.correctAnswer === 3 ? 'selected' : ''}>Option 4</option>
+                        </select>
+                    </div>
+                `;
+                questionsContainer.appendChild(questionDiv);
+            });
+        }
+        function addQuestion(){
+            const questionDiv=document.createElement('div');
+            questionDiv.className='question';
+            questionDiv.innerHTML=`
+                <input type="text" placeholder="Enter Question" class="question-input">
+                <div class="options">
+                    <input type="text" placeholder="Option 1" class="option-input">
+                    <input type="text" placeholder="Option 2" class="option-input">
+                    <input type="text" placeholder="Option 3" class="option-input">
+                    <input type="text" placeholder="Option 4" class="option-input">
+                    <p>Mark the correct option:</p>
+                    <select class="correct-option">
+                        <option value="0">Option 1</option>
+                        <option value="1">Option 2</option>
+                        <option value="2">Option 3</option>
+                        <option value="3">Option 4</option>
+                    </select>
+                </div>
+            `;
+            document.getElementById('questions').appendChild(questionDiv);
+        }
+        function generateQuiz(){
+            const questionElements=document.getElementsByClassName('question');
+            const questions=[];
+            for (let questionElement of questionElements){
+                const questionText=questionElement.querySelector('.question-input').value;
+                const optionInputs=questionElement.querySelectorAll('.option-input');
+                const correctOption=questionElement.querySelector('.correct-option').value;
+                const options=Array.from(optionInputs).map(input=>input.value);
+                if(!questionText || options.some(option=>!option)){
+                    alert('Please fill out all fields for each question.');
+                    return;
+                }
+                questions.push({
+                    question: questionText,
+                    options: options,
+                    correctAnswer: parseInt(correctOption)
+                });
+            }
+            currentQuizCode=currentQuizCode || Math.random().toString(36).substring(2,8).toUpperCase();
+            quizzes[currentQuizCode]={questions,scores:{}};
+            localStorage.setItem('quizzes',JSON.stringify(quizzes));
+            document.getElementById('quizCode').innerText=`Quiz Code: ${currentQuizCode}`;
+            alert(`Quiz saved with code: ${currentQuizCode}`);
+        }
+        function clearQuizForm(){
+            currentQuizCode=null;
+            document.getElementById('questions').innerHTML = `
+                <div class="question">
+                    <input type="text" placeholder="Enter Question" class="question-input">
+                    <div class="options">
+                        <input type="text" placeholder="Option 1" class="option-input">
+                        <input type="text" placeholder="Option 2" class="option-input">
+                        <input type="text" placeholder="Option 3" class="option-input">
+                        <input type="text" placeholder="Option 4" class="option-input">
+                        <p>Mark the correct option:</p>
+                        <select class="correct-option">
+                            <option value="0">Option 1</option>
+                            <option value="1">Option 2</option>
+                            <option value="2">Option 3</option>
+                            <option value="3">Option 4</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

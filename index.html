@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Builder</title>
+    <link rel="shortcut icon" href="Form Builder logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div>
+        <h2>Quiz Form</h2>
+        <button onclick="openPage('teacher.html')">Create/Edit Quiz</button>
+        <button onclick="openPage('student.html')">Answer Quiz</button>
+        <button onclick="openPage('results.html')">View Results</button>
+    </div><br>
+    <div>
+        <h2>Survey Form</h2>
+        <button onclick="openPage('create-survey.html')">Create/Edit Survey</button>
+        <button onclick="openPage('answer-survey.html')">Answer Survey</button>
+        <button onclick="openPage('analyze-survey.html')">Analyze Survey</button>
+    </div><br><br>
+    <footer style="background-color: #202123; color: #E0E0E0; padding: 20px; text-align: center;">
+        <div>
+            <p>&copy; 2024 Form Builder Software. All rights reserved.</p>
+            <p>
+                <a href="https://github.com/Jeevasuryaa/Form-Builder/blob/main/privacy-policy.txt" target="_blank" style="color: #3B82F6; text-decoration: none;">Privacy Policy</a> | 
+                <a href="https://github.com/Jeevasuryaa/Form-Builder/blob/main/terms-of-service.txt" target="_blank" style="color: #3B82F6; text-decoration: none;">Terms of Service</a>
+            </p>
+        </div>
+    </footer>    
+    <script>
+        function openPage(url){
+            window.open(url,'_blank');
+        }
+    </script>
+</body>
+</html>

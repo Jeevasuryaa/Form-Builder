@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormBuilder: Create/Edit Survey</title>
+    <link rel="shortcut icon" href="Form Builder logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Survey Management</h1>
+    <div>
+        <button onclick="chooseOption('new')">Create New Survey</button>
+        <button onclick="chooseOption('edit')">Edit Existing Survey</button>
+    </div>
+    <div id="surveySection" style="display: none;">
+        <div id="editSurveyCodeSection" style="display: none;">
+            <input type="text" id="existingSurveyCode" placeholder="Enter existing survey code">
+            <button onclick="loadSurvey()">Load Survey</button>
+        </div>
+        <div id="questions">
+            <div class="question">
+                <input type="text" placeholder="Enter Survey Question" class="question-input">
+                <div class="options">
+                    <input type="text" placeholder="Option 1" class="option-input">
+                    <input type="text" placeholder="Option 2" class="option-input">
+                    <input type="text" placeholder="Option 3" class="option-input">
+                    <input type="text" placeholder="Option 4" class="option-input">
+                </div>
+            </div>
+        </div>
+        <button onclick="addSurveyQuestion()">Add Survey Question</button>
+        <button onclick="generateSurvey()">Save Survey</button>
+        <p id="surveyCode"></p>
+    </div>
+    <footer style="background-color: #202123; color: #E0E0E0; padding: 20px; text-align: center;">
+        <div>
+            <p>&copy; 2024 Form Builder Software. All rights reserved.</p>
+            <p>
+                <a href="https://github.com/Jeevasuryaa/Form-Builder/blob/main/privacy-policy.txt" target="_blank" style="color: #3B82F6; text-decoration: none;">Privacy Policy</a> | 
+                <a href="https://github.com/Jeevasuryaa/Form-Builder/blob/main/terms-of-service.txt" target="_blank" style="color: #3B82F6; text-decoration: none;">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+    <script>
+        let surveys=JSON.parse(localStorage.getItem('surveys')) || {};
+        let currentSurveyCode=null;
+        function chooseOption(option){
+            document.getElementById('surveySection').style.display='block';
+            if(option==='new'){
+                document.getElementById('editSurveyCodeSection').style.display='none';
+                clearSurveyForm();
+            } else if(option==='edit'){
+                document.getElementById('editSurveyCodeSection').style.display='block';
+            }
+        }
+        function loadSurvey(){
+            const surveyCode=document.getElementById('existingSurveyCode').value.toUpperCase();
+            if(!surveys[surveyCode]){
+                alert('Survey code not found.');
+                return;
+            }
+            currentSurveyCode=surveyCode;
+            const surveyData=surveys[surveyCode];
+            populateSurveyForm(surveyData);
+        }
+        function populateSurveyForm(surveyData){
+            const questionsContainer=document.getElementById('questions');
+            questionsContainer.innerHTML='';
+            surveyData.questions.forEach((question)=>{
+                const questionDiv=document.createElement('div');
+                questionDiv.className='question';
+                questionDiv.innerHTML=`
+                    <input type="text" value="${question.question}" class="question-input">
+                    <div class="options">
+                        <input type="text" value="${question.options[0]}" class="option-input">
+                        <input type="text" value="${question.options[1]}" class="option-input">
+                        <input type="text" value="${question.options[2]}" class="option-input">
+                        <input type="text" value="${question.options[3]}" class="option-input">
+                    </div>
+                `;
+                questionsContainer.appendChild(questionDiv);
+            });
+        }
+        function addSurveyQuestion(){
+            const questionDiv=document.createElement('div');
+            questionDiv.className='question';
+            questionDiv.innerHTML=`
+                <input type="text" placeholder="Enter Survey Question" class="question-input">
+                <div class="options">
+                    <input type="text" placeholder="Option 1" class="option-input">
+                    <input type="text" placeholder="Option 2" class="option-input">
+                    <input type="text" placeholder="Option 3" class="option-input">
+                    <input type="text" placeholder="Option 4" class="option-input">
+                </div>
+            `;
+            document.getElementById('questions').appendChild(questionDiv);
+        }
+        function generateSurvey(){
+            const questionElements=document.getElementsByClassName('question');
+            const questions=[];
+            for(let questionElement of questionElements){
+                const questionText=questionElement.querySelector('.question-input').value;
+                const optionInputs=questionElement.querySelectorAll('.option-input');
+                const options=Array.from(optionInputs).map(input=>input.value);
+                if(!questionText || options.some(option=>!option)){
+                    alert('Please fill out all fields for each question.');
+                    return;
+                }
+                questions.push({
+                    question: questionText,
+                    options: options
+                });
+            }
+            currentSurveyCode=currentSurveyCode || Math.random().toString(36).substring(2,8).toUpperCase();
+            surveys[currentSurveyCode]={questions,responses:{}};
+            localStorage.setItem('surveys',JSON.stringify(surveys));
+            document.getElementById('surveyCode').innerText=`Survey Code: ${currentSurveyCode}`;
+            alert(`Survey saved with code: ${currentSurveyCode}`);
+        }
+        function clearSurveyForm(){
+            currentSurveyCode=null;
+            document.getElementById('questions').innerHTML=`
+                <div class="question">
+                    <input type="text" placeholder="Enter Survey Question" class="question-input">
+                    <div class="options">
+                        <input type="text" placeholder="Option 1" class="option-input">
+                        <input type="text" placeholder="Option 2" class="option-input">
+                        <input type="text" placeholder="Option 3" class="option-input">
+                        <input type="text" placeholder="Option 4" class="option-input">
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

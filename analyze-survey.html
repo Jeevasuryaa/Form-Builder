@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Builder: Analyze Survey</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="shortcut icon" href="Form Builder logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Analyze Survey</h1>
+    <input type="text" id="surveyCode" placeholder="Enter survey code">
+    <button onclick="analyzeSurvey()">Analyze Survey</button>
+    <div id="surveyAnalysis"></div>
+    <footer style="background-color: #202123; color: #E0E0E0; padding: 20px; text-align: center;">
+        <div>
+            <p>&copy; 2024 Form Builder Software. All rights reserved.</p>
+            <p>
+                <a href="https://github.com/Jeevasuryaa/Form-Builder/blob/main/privacy-policy.txt" target="_blank" style="color: #3B82F6; text-decoration: none;">Privacy Policy</a> | 
+                <a href="https://github.com/Jeevasuryaa/Form-Builder/blob/main/terms-of-service.txt" target="_blank" style="color: #3B82F6; text-decoration: none;">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+    <script>
+        function analyzeSurvey(){
+            const surveyCode=document.getElementById('surveyCode').value.toUpperCase();
+            const surveys=JSON.parse(localStorage.getItem('surveys'));
+            if(!surveys || !surveys[surveyCode]){
+                alert('Invalid survey code.');
+                return;
+            }
+            const surveyData=surveys[surveyCode];
+            const analysisContainer=document.getElementById('surveyAnalysis');
+            analysisContainer.innerHTML='';
+            surveyData.questions.forEach((question,index)=>{
+                const questionDiv=document.createElement('div');
+                questionDiv.innerHTML=`<h3>${index + 1}. ${question.question}</h3>`;
+                const responses=[];
+                for(let i=0;i<question.options.length;i++){responses[i]=0;}
+                for(const response of Object.values(surveyData.responses)){
+                    if(response[index]!==null){responses[response[index]]++;}
+                }
+                const chartCanvas=document.createElement('canvas');
+                chartCanvas.id=`chart${index}`;
+                questionDiv.appendChild(chartCanvas);
+                analysisContainer.appendChild(questionDiv);
+                const ctx=document.getElementById(`chart${index}`).getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: question.options,
+                        datasets: [{
+                            data: responses,
+                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+                        }]
+                    },
+                    options:{
+                        responsive: true,
+                        plugins:{
+                            legend:{
+                                position: 'top',
+                            }
+                        }
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
