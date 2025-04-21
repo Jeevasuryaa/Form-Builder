@@ -26,7 +26,7 @@ This project is a web-based application that allows users to create and manage q
 - Open the "index.html" file and run it in web browser.
 
 ## Contributors
-- Jeevasuryaa P
+- Jeevasuryaa Perumalsamy
 - Muhammed Nihal K P
 
 ## Legal
