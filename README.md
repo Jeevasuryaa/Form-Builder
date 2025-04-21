@@ -25,6 +25,10 @@ This project is a web-based application that allows users to create and manage q
 - Unzip the contents to access all html and css files.
 - Open the "index.html" file and run it in web browser.
 
+## Contributors
+- Jeevasuryaa Perumalsamy
+- Muhammed Nihal K P
+
 ## Legal
 - [Privacy Policy](privacy-policy.txt)
 - [Terms of Service](terms-of-service.txt)
