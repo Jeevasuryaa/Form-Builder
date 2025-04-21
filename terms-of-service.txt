@@ -3,10 +3,11 @@
 Effective Date: 26 October 2024
 
 ## Acceptance of Terms
-By using our service, you agree to be bound by these terms. If you do not agree to these terms, please do not use our service.
+- By using our service, you agree to be bound by these terms. If you do not agree to these terms, please do not use our service.
+- By any chance, if there is a loss of data we are not responsible for it.
 
 ## User Responsibilities
-- You are responsible for maintaining the confidentiality of your account information.
+- You are responsible for maintaining the confidentiality of your data.
 
 ## Limitation of Liability
 In no event shall the software be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the service.
