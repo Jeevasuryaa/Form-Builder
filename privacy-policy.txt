@@ -6,7 +6,6 @@ Effective Date: 26 October 2024
 This privacy policy explains how we collect, use, disclose, and safeguard your information when you use our Quiz and Survey Form Software.
 
 ## Information We Collect
-- **Personal Information**: We may collect personal information such as your name and email address when you register or use our services.
 - **Usage Data**: We may collect information on how the service is accessed and used.
 
 ## How We Use Your Information
